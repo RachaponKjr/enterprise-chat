@@ -1,0 +1,9 @@
+allowBuilds:
+  '@prisma/client': true
+  '@prisma/engines': true
+  prisma: true
+  protobufjs: false
+
+nodeLinker: hoisted
+storeDir: .pnpm-store
+packageImportMethod: copy

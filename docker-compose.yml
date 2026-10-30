@@ -1,0 +1,28 @@
+services:
+  nats:
+    image: nats:2-alpine
+    command: ["-js", "-m", "8222"]
+    ports: ["4222:4222", "8222:8222"]
+    healthcheck:
+      test: ["CMD", "nats", "server", "check", "connection", "-s", "nats://localhost:4222"]
+      interval: 10s
+      retries: 5
+  auth-db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: auth_dev_password
+      POSTGRES_DB: auth_db
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: ["auth_data:/var/lib/postgresql/data"]
+  chat-db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: chat
+      POSTGRES_PASSWORD: chat_dev_password
+      POSTGRES_DB: chat_db
+    ports: ["127.0.0.1:5434:5432"]
+    volumes: ["chat_data:/var/lib/postgresql/data"]
+volumes:
+  auth_data:
+  chat_data:

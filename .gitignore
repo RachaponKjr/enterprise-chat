@@ -1,0 +1,25 @@
+# Node.js
+node_modules/
+dist/
+coverage/
+.pnpm-store/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Rust
+target/
+**/target/
+
+# Logs
+*.log
+
+# Prisma SQLite
+*.db
+*.db-journal
+
+# Editor
+.vscode/
+.idea/
