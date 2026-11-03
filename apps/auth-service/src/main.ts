@@ -3,6 +3,7 @@ import { Transport, type MicroserviceOptions } from '@nestjs/microservices';
 import { join } from 'node:path';
 
 import { AppModule, ObserveInstrument } from './app.module.js';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
@@ -10,7 +11,7 @@ async function bootstrap() {
     {
       transport: Transport.GRPC,
       options: {
-        package: 'auth.v1',
+        package: 'auth.v2',
         protoPath: join(process.cwd(), '../../packages/proto/auth.proto'),
         url: '127.0.0.1:50051',
       },
@@ -18,6 +19,10 @@ async function bootstrap() {
       // Enable Observe instrumentation
       instrument: ObserveInstrument,
     },
+  );
+
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   );
 
   await app.listen();

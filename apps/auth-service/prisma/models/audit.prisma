@@ -1,0 +1,42 @@
+enum SecurityEventType {
+    REGISTER
+    EMAIL_VERIFIED
+    LOGIN_SUCCESS
+    LOGIN_FAILED
+    LOGOUT
+    LOGOUT_ALL
+    PASSWORD_CHANGED
+    PASSWORD_RESET
+    PIN_CREATED
+    PIN_CHANGED
+    PIN_FAILED
+    MFA_ENABLED
+    MFA_DISABLED
+    MFA_FAILED
+    PASSKEY_REGISTERED
+    PASSKEY_REMOVED
+    SESSION_REVOKED
+    TOKEN_REUSE_DETECTED
+    ACCOUNT_LOCKED
+    ACCOUNT_UNLOCKED
+}
+
+model SecurityAuditLog {
+    id String @id @default(uuid())
+
+    userId String?
+    event  SecurityEventType
+
+    ipAddress String?
+    userAgent String?
+
+    requestId String?
+    metadata  Json?
+
+    user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+    createdAt DateTime @default(now())
+
+    @@index([userId, createdAt])
+    @@index([event, createdAt])
+}

@@ -1,0 +1,22 @@
+model PasskeyCredential {
+    id     String @id @default(uuid())
+    userId String
+
+    credentialId String @unique
+    publicKey    Bytes
+
+    counter BigInt @default(0)
+
+    transports Json @default("[]")
+    deviceType String?
+    backedUp   Boolean  @default(false)
+
+    name String?
+
+    createdAt  DateTime  @default(now())
+    lastUsedAt DateTime?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+}

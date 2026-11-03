@@ -1,0 +1,31 @@
+enum LoginChallengeStatus {
+    PENDING
+    COMPLETED
+    EXPIRED
+    CANCELLED
+}
+
+model LoginChallenge {
+    id     String @id @default(uuid())
+    userId String
+
+    challengeHash String @unique
+
+    status LoginChallengeStatus @default(PENDING)
+
+    allowedMethods  Json @default("[]")
+    verifiedMethods Json @default("[]")
+
+    attempts    Int @default(0)
+    maxAttempts Int @default(5)
+
+    expiresAt   DateTime
+    completedAt DateTime?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    @@index([userId, status])
+    @@index([expiresAt])
+}

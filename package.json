@@ -1,0 +1,14 @@
+{
+  "name": "enterprise-chat",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --filter api-gateway --filter auth-service --filter chat-service run start:dev",
+    "dev:gateway": "pnpm --filter api-gateway run start:dev",
+    "dev:auth": "pnpm --filter auth-service run start:dev",
+    "dev:chat": "pnpm --filter chat-service run start:dev",
+    "build": "pnpm -r --filter './apps/*' run build",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "chat-service",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "cargo run",
+    "start:dev": "cargo watch -x run",
+    "build": "cargo build --release"
+  }
+}

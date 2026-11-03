@@ -1,50 +1,57 @@
 
 syntax = "proto3";
 
-package auth.v1;
+package auth.v2;
 
 service AuthService {
   rpc Health(HealthRequest) returns (HealthResponse);
+
   rpc Register(RegisterRequest) returns (RegisterResponse);
-  rpc Login(LoginRequest) returns (AuthResponse);
+  rpc VerifyEmail(VerifyEmailRequest) returns (OperationResponse);
+  rpc ResendEmailVerification(ResendEmailVerificationRequest)
+      returns (OperationResponse);
+
+  rpc BeginLogin(BeginLoginRequest) returns (BeginLoginResponse);
+  rpc CompleteLogin(CompleteLoginRequest) returns (AuthResponse);
+
+  rpc SetupPin(SetupPinRequest) returns (OperationResponse);
+  rpc ChangePin(ChangePinRequest) returns (OperationResponse);
+  rpc BeginTotpEnrollment(BeginTotpEnrollmentRequest)
+      returns (BeginTotpEnrollmentResponse);
+  rpc ConfirmTotpEnrollment(ConfirmTotpEnrollmentRequest)
+      returns (OperationResponse);
+
   rpc RefreshToken(RefreshTokenRequest) returns (AuthResponse);
-  rpc Logout(LogoutRequest) returns (LogoutResponse);
   rpc ValidateToken(ValidateTokenRequest)
       returns (ValidateTokenResponse);
+  rpc Logout(LogoutRequest) returns (OperationResponse);
+  rpc LogoutAll(LogoutAllRequest) returns (OperationResponse);
+
+  rpc ListSessions(ListSessionsRequest) returns (ListSessionsResponse);
+  rpc RevokeSession(RevokeSessionRequest) returns (OperationResponse);
+
   rpc CheckPermission(CheckPermissionRequest)
       returns (CheckPermissionResponse);
 }
 
+
 message HealthRequest {}
 
 message HealthResponse {
-  string status = 1;
+  bool status = 1;
   string service = 2;
 }
 
-message RegisterRequest {
-  string email = 1;
-  string password = 2;
-  string display_name = 3;
-}
-
-message RegisterResponse {
-  string user_id = 1;
+message OperationResponse {
+  bool success = 1;
   string message = 2;
 }
 
-message LoginRequest {
-  string email = 1;
-  string password = 2;
-  string device_id = 3;
-}
-
-message AuthResponse {
-  string access_token = 1;
-  string refresh_token = 2;
-  string token_type = 3;
-  int32 expires_in = 4;
-  UserInfo user = 5;
+message RequestContext {
+  string device_id = 1;
+  string device_name = 2;
+  string platform = 3;
+  string request_id = 4;
 }
 
 message UserInfo {
@@ -55,18 +62,103 @@ message UserInfo {
   repeated string roles = 5;
   repeated string permissions = 6;
   string position_id = 7;
+  bool email_verified = 8;
+  bool mfa_enabled = 9;
 }
+
+
+
+message RegisterRequest {
+  string email = 1;
+  string password = 2;
+  string display_name = 3;
+}
+
+message RegisterResponse {
+  string user_id = 1;
+  string message = 2;
+  bool email_verification_required = 3;
+}
+
+message VerifyEmailRequest {
+  string verification_token = 1;
+}
+
+message ResendEmailVerificationRequest {
+  string email = 1;
+}
+
+
+message BeginLoginRequest {
+  string email = 1;
+  string password = 2;
+  RequestContext context = 3;
+}
+
+enum ChallengeType {
+  CHALLENGE_UNSPECIFIED = 0;
+  CHALLENGE_PIN = 1;
+  CHALLENGE_TOTP = 2;
+  CHALLENGE_PASSKEY = 3;
+}
+
+message BeginLoginResponse {
+  string challenge_id = 1;
+  repeated ChallengeType available_challenges = 2;
+  int32 expires_in = 3;
+}
+
+message CompleteLoginRequest {
+  string challenge_id = 1;
+  ChallengeType challenge_type = 2;
+
+  oneof proof {
+    string pin = 3;
+    string totp_code = 4;
+    string passkey_assertion_json = 5;
+  }
+}
+
+message AuthResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  string token_type = 3;
+  int32 expires_in = 4;
+  UserInfo user = 5;
+  string session_id = 6;
+}
+
+
+message SetupPinRequest {
+  string enrollment_token = 1;
+  string pin = 2;
+}
+
+message ChangePinRequest {
+  string authorization_token = 1;
+  string new_pin = 2;
+}
+
+
+message BeginTotpEnrollmentRequest {
+  string authorization_token = 1;
+}
+
+message BeginTotpEnrollmentResponse {
+  string enrollment_id = 1;
+  string otpauth_uri = 2;
+  int32 expires_in = 3;
+}
+
+message ConfirmTotpEnrollmentRequest {
+  string enrollment_id = 1;
+  string totp_code = 2;
+}
+
 
 message RefreshTokenRequest {
   string refresh_token = 1;
-}
-
-message LogoutRequest {
-  string refresh_token = 1;
-}
-
-message LogoutResponse {
-  bool success = 1;
+  string device_id = 2;
 }
 
 message ValidateTokenRequest {
@@ -76,6 +168,41 @@ message ValidateTokenRequest {
 message ValidateTokenResponse {
   bool valid = 1;
   string user_id = 2;
+  string session_id = 3;
+  string organization_id = 4;
+  repeated string roles = 5;
+  int64 expires_at = 6;
+}
+
+message LogoutRequest {
+  string refresh_token = 1;
+}
+
+message LogoutAllRequest {
+  string authorization_token = 1;
+}
+
+message SessionInfo {
+  string id = 1;
+  string device_id = 2;
+  string device_name = 3;
+  string platform = 4;
+  int64 created_at = 5;
+  int64 last_active_at = 6;
+  bool current = 7;
+}
+
+message ListSessionsRequest {
+  string authorization_token = 1;
+}
+
+message ListSessionsResponse {
+  repeated SessionInfo sessions = 1;
+}
+
+message RevokeSessionRequest {
+  string authorization_token = 1;
+  string session_id = 2;
 }
 
 message CheckPermissionRequest {

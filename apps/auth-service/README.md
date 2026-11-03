@@ -135,16 +135,16 @@ Run commands from `apps/auth-service`:
 
 ```powershell
 pnpm install
-# Only if .env is missing:
-Copy-Item .env.example .env
-pnpm prisma:migrate --name init
+# If .env is missing, create it with DATABASE_URL="file:./dev.db".
+pnpm prisma:migrate
 pnpm build
 pnpm start:dev
 ```
 
 `DATABASE_URL="file:./dev.db"` points to `prisma/dev.db` (relative to the schema).
-The initial User model stores email, display name and a password hash. Auth RPC
-implementations must hash passwords before saving them; Prisma setup does not
+The auth models use SQLite-compatible fields. Method and transport lists are
+stored as JSON arrays. Password hashes belong in `UserCredential`, and auth RPC
+implementations must hash passwords before saving them. Prisma setup does not
 implement registration or login.
 
 ```powershell

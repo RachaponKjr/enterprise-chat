@@ -1,0 +1,28 @@
+enum MfaType {
+    TOTP
+}
+
+model MfaAuthenticator {
+    id     String @id @default(uuid())
+    userId String
+
+    type MfaType @default(TOTP)
+    name String?
+
+    secretEncrypted      String
+    encryptionKeyVersion Int    @default(1)
+
+    verifiedAt DateTime?
+    lastUsedAt DateTime?
+
+    lastAcceptedStep BigInt?
+
+    enabled Boolean @default(false)
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId, enabled])
+}

@@ -4,8 +4,10 @@ import type { Observable } from 'rxjs';
 import {
   AuthGrpcService,
   HealthResponse,
+  RegisterResponse,
 } from './interfaces/auth-grpc.interface.js';
-import type { ClientGrpc } from '@nestjs/microservices';
+import { Payload, type ClientGrpc } from '@nestjs/microservices';
+import { RegisterDto } from './dto/register.dto.js';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -22,5 +24,13 @@ export class AuthService implements OnModuleInit {
 
   health(): Observable<HealthResponse> {
     return this.grpcService.health({});
+  }
+
+  register(payload: RegisterDto): Observable<RegisterResponse> {
+    return this.grpcService.register(payload);
+  }
+
+  login(@Payload() payload: any): Observable<void> {
+    throw new Error('Login is not implemented');
   }
 }

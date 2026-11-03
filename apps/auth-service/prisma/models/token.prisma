@@ -1,0 +1,45 @@
+enum SecurityTokenType {
+    EMAIL_VERIFICATION
+    PASSWORD_RESET
+    EMAIL_CHANGE
+}
+
+model RefreshToken {
+    id        String @id @default(uuid())
+    sessionId String
+
+    tokenHash String @unique
+    familyId  String
+
+    parentTokenId String?
+
+    expiresAt DateTime
+    usedAt    DateTime?
+    revokedAt DateTime?
+
+    session AuthSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    @@index([sessionId])
+    @@index([familyId])
+    @@index([expiresAt])
+}
+
+model SecurityToken {
+    id     String @id @default(uuid())
+    userId String
+
+    type      SecurityTokenType
+    tokenHash String            @unique
+
+    expiresAt  DateTime
+    consumedAt DateTime?
+
+    user User @relation(fields: [userId], references:[id],onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    @@index([userId, type])
+    @@index([expiresAt])
+}

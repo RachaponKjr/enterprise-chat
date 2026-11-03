@@ -1,0 +1,35 @@
+enum DevicePlatform {
+    WEB
+    IOS
+    ANDROID
+    WINDOWS
+    MACOS
+    LINUX
+    OTHER
+}
+
+model UserDevice {
+    id     String @id @default(uuid())
+    userId String
+
+    deviceIdentifierHash String
+    deviceName           String?
+
+    platform DevicePlatform @default(OTHER)
+
+    trustedAt      DateTime?
+    trustExpiresAt DateTime?
+    revokedAt      DateTime?
+
+    lastSeenAt DateTime?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    sessions AuthSession[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([userId, deviceIdentifierHash])
+    @@index([userId, revokedAt])
+}

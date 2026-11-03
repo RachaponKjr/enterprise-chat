@@ -12,7 +12,7 @@ import { AuthService } from './auth.service.js';
         transport: Transport.GRPC,
         options: {
           url: '127.0.0.1:50051',
-          package: 'auth.v1',
+          package: 'auth.v2',
           protoPath: join(process.cwd(), '../../packages/proto/auth.proto'),
         },
       },

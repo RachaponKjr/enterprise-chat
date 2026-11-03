@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package access.v1;
+
+service AccessService {
+  rpc Health(HealthRequest) returns (HealthResponse);
+  rpc CheckPermission(CheckPermissionRequest)
+      returns (CheckPermissionResponse);
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  bool status = 1;
+  string service = 2;
+}
+
+message CheckPermissionRequest {
+  string user_id = 1;
+  string organization_id = 2;
+  string permission = 3;
+  string resource_id = 4;
+}
+
+message CheckPermissionResponse {
+  bool allowed = 1;
+  string reason = 2;
+}

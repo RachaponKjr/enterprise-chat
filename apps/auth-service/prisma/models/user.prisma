@@ -1,0 +1,35 @@
+enum UserStatus {
+    PENDING_VERIFICATION
+    ACTIVE
+    SUSPENDED
+    DISABLED
+}
+
+model User {
+    id          String @id @default(uuid())
+    email       String @unique
+    displayName String
+
+    status          UserStatus @default(PENDING_VERIFICATION)
+    emailVerifiedAt DateTime?
+
+    failedLoginAttempts Int       @default(0)
+    lockedUntil         DateTime?
+    lastLoginAt         DateTime?
+
+    credential UserCredential?
+    pin        UserPin?
+
+    mfaAuthenticators MfaAuthenticator[]
+    passkeys          PasskeyCredential[]
+    devices           UserDevice[]
+    sessions          AuthSession[]
+    challenges        LoginChallenge[]
+    tokens            SecurityToken[]
+    auditLogs         SecurityAuditLog[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([status])
+}

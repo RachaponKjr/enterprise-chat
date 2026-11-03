@@ -1,29 +1,29 @@
-import { Controller, Logger } from '@nestjs/common';
-import { GrpcMethod, RpcException } from '@nestjs/microservices';
+import { Controller, Logger, Req } from '@nestjs/common';
+import { GrpcMethod, Payload, RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
+import { RegisterDto } from './dto/register.dto.js';
+import { AuthService } from './auth.service.js';
 
 @Controller()
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
-  constructor() {
+  constructor(private readonly authService: AuthService) {
     this.logger.log('AuthController initialized');
   }
   @GrpcMethod('AuthService', 'Health')
   health() {
     this.logger.log('Health RPC called');
     return {
-      status: 'SERVING',
+      status: true,
       service: 'auth-service',
     };
   }
 
   @GrpcMethod('AuthService', 'Register')
-  register() {
-    throw new RpcException({
-      code: status.UNIMPLEMENTED,
-      message: 'Register is not implemented',
-    });
+  async register(@Payload() payload: RegisterDto) {
+    this.logger.log('Register RPC called');
+    return this.authService.registerUser(payload);
   }
 
   @GrpcMethod('AuthService', 'Login')
