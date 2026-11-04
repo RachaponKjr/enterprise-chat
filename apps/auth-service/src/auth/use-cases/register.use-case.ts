@@ -48,7 +48,15 @@ export class RegisterUseCase {
       'EMAIL_VERIFICATION',
     );
 
-    await this.emailService.sendVerificationEmail(email, (await tokenHash).token);
+    // await this.emailService.sendVerificationEmail(
+    //   email,
+    //   (await tokenHash).token,
+    // );
+
+    console.log(
+      'http://localhost:3000/api/v1/auth/verify-email/' +
+        (await tokenHash).token,
+    );
 
     return {
       userId: user.id,

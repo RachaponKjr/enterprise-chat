@@ -5,9 +5,12 @@ import {
   AuthGrpcService,
   HealthResponse,
   RegisterResponse,
+  ResendVerifyRespones,
+  VerifyRespones,
 } from './interfaces/auth-grpc.interface.js';
 import { Payload, type ClientGrpc } from '@nestjs/microservices';
 import { RegisterDto } from './dto/register.dto.js';
+import { ReVerifyEmailDto, VerifyEmailDto } from './dto/verify.dto.js';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -28,6 +31,16 @@ export class AuthService implements OnModuleInit {
 
   register(payload: RegisterDto): Observable<RegisterResponse> {
     return this.grpcService.register(payload);
+  }
+
+  verifyEmail(paylaod: VerifyEmailDto): Observable<VerifyRespones> {
+    return this.grpcService.verifyEmail(paylaod);
+  }
+
+  resendVerifyEmail(
+    payload: ReVerifyEmailDto,
+  ): Observable<ResendVerifyRespones> {
+    return this.grpcService.resendEmailVerification(payload);
   }
 
   login(@Payload() payload: any): Observable<void> {

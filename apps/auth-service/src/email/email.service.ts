@@ -7,14 +7,15 @@ export class EmailService implements OnModuleDestroy {
   private readonly logger = new Logger(EmailService.name);
   private readonly transporter: Transporter;
 
-  constructor(private readonly config: ConfigService) {
+  constructor() {
     this.transporter = nodemailer.createTransport({
-      host: this.config.getOrThrow<string>('SMTP_HOST'),
-      port: Number(this.config.getOrThrow<string>('SMTP_PORT')),
-      secure: this.config.get<string>('SMTP_SECURE') === 'true',
+      host: process.env.SMTP_HOST,
+      // port: Number(this.config.getOrThrow<string>('SMTP_PORT')),
+      port: Number(process.env.SMTP_PORT),
+      secure: process.env.SMTP_SECURE === 'true',
       auth: {
-        user: this.config.getOrThrow<string>('SMTP_USER'),
-        pass: this.config.getOrThrow<string>('SMTP_PASSWORD'),
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
       },
       connectionTimeout: 10000,
       greetingTimeout: 10000,
@@ -23,13 +24,13 @@ export class EmailService implements OnModuleDestroy {
   }
 
   async sendVerificationEmail(email: string, token: string): Promise<void> {
-    const frontendUrl = this.config.getOrThrow<string>('FRONTEND_URL');
+    const frontendUrl = process.env.FRONTEND_URL;
 
     const verificationUrl = new URL('/verify-email', frontendUrl);
     verificationUrl.searchParams.set('token', token);
 
     await this.transporter.sendMail({
-      from: this.config.getOrThrow<string>('SMTP_FROM'),
+      from: process.env.SMTP_FROM,
       to: email,
       subject: 'ยืนยันอีเมลของคุณ | Enterprise Chat',
       text: [

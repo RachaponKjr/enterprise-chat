@@ -6,6 +6,8 @@ import { UserRepository } from './repositories/user.repository.js';
 import { HashService } from '../common/hash.service.js';
 import { TokenService } from './repositories/token.repository.js';
 import { EmailService } from '../email/email.service.js';
+import { VerifyEmailUseCase } from './use-cases/verify.use-case.js';
+import { VerifyEmailRepository } from './repositories/verify-email.repository.js';
 
 @Module({
   controllers: [AuthController],
@@ -15,7 +17,9 @@ import { EmailService } from '../email/email.service.js';
     UserRepository,
     HashService,
     TokenService,
-    EmailService
+    EmailService,
+    VerifyEmailUseCase,
+    VerifyEmailRepository,
   ],
 })
 export class AuthModule {}

@@ -3,6 +3,7 @@ import { GrpcMethod, Payload, RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 import { RegisterDto } from './dto/register.dto.js';
 import { AuthService } from './auth.service.js';
+import { ReVerifyEmailDto, VerifyEmailDto } from './dto/verify.dto.js';
 
 @Controller()
 export class AuthController {
@@ -23,7 +24,18 @@ export class AuthController {
   @GrpcMethod('AuthService', 'Register')
   async register(@Payload() payload: RegisterDto) {
     this.logger.log('Register RPC called');
-    return this.authService.registerUser(payload);
+    return await this.authService.registerUser(payload);
+  }
+  @GrpcMethod('AuthService', 'VerifyEmail')
+  async verifyemail(@Payload() payload: VerifyEmailDto) {
+    this.logger.log('Verify RPC called');
+    return await this.authService.verifyEmail(payload);
+  }
+
+  @GrpcMethod('AuthService', 'ResendEmailVerification')
+  async resendVerifyEmail(@Payload() payload: ReVerifyEmailDto) {
+    this.logger.log('Resend RPC called');
+    return await this.authService.resendVerifyEmail(payload);
   }
 
   @GrpcMethod('AuthService', 'Login')
