@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '#prisma';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { UserAlreadyExistsError } from '../errors/user-already-exists.error.js';
 

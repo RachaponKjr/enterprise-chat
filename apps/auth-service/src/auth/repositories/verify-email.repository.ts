@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
-import { SecurityTokenType } from '@prisma/client';
+import { SecurityTokenType } from '#prisma';
 import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 

@@ -1,0 +1,21 @@
+model Workspace {
+  id          String @id @default(uuid())
+  name        String
+  description String @default("")
+
+  ownerId   String
+  createdBy String
+
+  categories Category[]
+  channels   Channel[]
+  members    WorkspaceMember[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([ownerId])
+  @@index([createdBy])
+  @@index([deletedAt])
+  @@index([createdAt, id])
+}

@@ -1,0 +1,17 @@
+model Category {
+  id          String @id @default(uuid())
+  workspaceId String
+
+  name     String
+  position Int    @default(0)
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  channels Channel[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([id, workspaceId])
+  @@index([workspaceId, position])
+}

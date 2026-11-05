@@ -1,0 +1,268 @@
+
+syntax = "proto3";
+
+package room.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+service WorkspaceService {
+  // Workspace
+  rpc CreateWorkspace(CreateWorkspaceRequest) returns (Workspace); //ok
+  rpc GetWorkspace(GetWorkspaceRequest) returns (Workspace); //ok
+  rpc ListWorkspaces(ListWorkspacesRequest) returns (ListWorkspacesResponse); //ok
+
+  // Category
+  rpc CreateCategory(CreateCategoryRequest) returns (Category);
+  rpc GetCategory(GetCategoryRequest) returns (Category);
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse);
+  rpc UpdateCategory(UpdateCategoryRequest) returns (Category);
+  rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryResponse);
+
+  // Channel
+  rpc CreateChannel(CreateChannelRequest) returns (Channel);
+  rpc GetChannel(GetChannelRequest) returns (Channel);
+  rpc ListChannels(ListChannelsRequest) returns (ListChannelsResponse);
+  rpc UpdateChannel(UpdateChannelRequest) returns (Channel);
+  rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse);
+
+  // Membership
+  rpc JoinChannel(JoinChannelRequest) returns (ChannelMember);
+  rpc LeaveChannel(LeaveChannelRequest) returns (LeaveChannelResponse);
+  rpc AddChannelMember(AddChannelMemberRequest) returns (ChannelMember);
+  rpc RemoveChannelMember(RemoveChannelMemberRequest) returns (RemoveChannelMemberResponse);
+  rpc ListChannelMembers(ListChannelMembersRequest) returns (ListChannelMembersResponse);
+}
+
+// =============================
+// ENUMS
+// =============================
+
+enum ChannelType {
+  CHANNEL_TYPE_UNSPECIFIED = 0;
+  CHANNEL_TYPE_TEXT = 1;
+  CHANNEL_TYPE_VOICE = 2;
+  CHANNEL_TYPE_ANNOUNCEMENT = 3;
+}
+
+enum ChannelVisibility {
+  CHANNEL_VISIBILITY_UNSPECIFIED = 0;
+  CHANNEL_VISIBILITY_PUBLIC = 1;
+  CHANNEL_VISIBILITY_PRIVATE = 2;
+}
+
+enum ChannelMemberRole {
+  CHANNEL_MEMBER_ROLE_UNSPECIFIED = 0;
+  CHANNEL_MEMBER_ROLE_OWNER = 1;
+  CHANNEL_MEMBER_ROLE_ADMIN = 2;
+  CHANNEL_MEMBER_ROLE_MEMBER = 3;
+}
+
+// =============================
+// MODELS
+// =============================
+
+message Workspace {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string owner_id = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message Category {
+  string id = 1;
+  string workspace_id = 2;
+  string name = 3;
+  int32 position = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message Channel {
+  string id = 1;
+  string workspace_id = 2;
+
+  optional string category_id = 3;
+
+  string name = 4;
+  string description = 5;
+  ChannelType type = 6;
+  ChannelVisibility visibility = 7;
+
+  int32 position = 8;
+  string created_by = 9;
+
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message ChannelMember {
+  string channel_id = 1;
+  string user_id = 2;
+  ChannelMemberRole role = 3;
+  google.protobuf.Timestamp joined_at = 4;
+}
+
+// =============================
+// WORKSPACE REQUESTS
+// =============================
+
+message CreateWorkspaceRequest {
+  string name = 1;
+  optional string description = 2;
+}
+
+message GetWorkspaceRequest {
+  string workspace_id = 1;
+}
+
+message ListWorkspacesRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListWorkspacesResponse {
+  repeated Workspace workspaces = 1;
+  string next_page_token = 2;
+}
+
+// =============================
+// CATEGORY REQUESTS
+// =============================
+
+message CreateCategoryRequest {
+  string workspace_id = 1;
+  string name = 2;
+  int32 position = 3;
+}
+
+message GetCategoryRequest {
+  string category_id = 1;
+}
+
+message ListCategoriesRequest {
+  string workspace_id = 1;
+}
+
+message ListCategoriesResponse {
+  repeated Category categories = 1;
+}
+
+message UpdateCategoryRequest {
+  string category_id = 1;
+  string name = 2;
+  int32 position = 3;
+  google.protobuf.FieldMask update_mask = 4;
+}
+
+message DeleteCategoryRequest {
+  string category_id = 1;
+
+  // true: delete channels in the category.
+  // false: move channels to uncategorized.
+  bool delete_channels = 2;
+}
+
+message DeleteCategoryResponse {
+  bool success = 1;
+}
+
+// =============================
+// CHANNEL REQUESTS
+// =============================
+
+message CreateChannelRequest {
+  string workspace_id = 1;
+
+  // Omit when creating an uncategorized channel.
+  optional string category_id = 2;
+
+  string name = 3;
+  string description = 4;
+  ChannelType type = 5;
+  ChannelVisibility visibility = 6;
+  int32 position = 7;
+}
+
+message GetChannelRequest {
+  string channel_id = 1;
+}
+
+message ListChannelsRequest {
+  string workspace_id = 1;
+
+  // Set to filter by category.
+  // Omit to list all accessible channels.
+  optional string category_id = 2;
+
+  int32 page_size = 3;
+  string page_token = 4;
+
+  // When true, only channels without categories.
+  bool uncategorized_only = 5;
+}
+
+message ListChannelsResponse {
+  repeated Channel channels = 1;
+  string next_page_token = 2;
+}
+
+message UpdateChannelRequest {
+  string channel_id = 1;
+
+  // Use update_mask to specify modified fields.
+  Channel channel = 2;
+  google.protobuf.FieldMask update_mask = 3;
+}
+
+message DeleteChannelRequest {
+  string channel_id = 1;
+}
+
+message DeleteChannelResponse {
+  bool success = 1;
+}
+
+// =============================
+// MEMBERSHIP REQUESTS
+// =============================
+
+message JoinChannelRequest {
+  string channel_id = 1;
+}
+
+message LeaveChannelRequest {
+  string channel_id = 1;
+}
+
+message LeaveChannelResponse {
+  bool success = 1;
+}
+
+message AddChannelMemberRequest {
+  string channel_id = 1;
+  string user_id = 2;
+  ChannelMemberRole role = 3;
+}
+
+message RemoveChannelMemberRequest {
+  string channel_id = 1;
+  string user_id = 2;
+}
+
+message RemoveChannelMemberResponse {
+  bool success = 1;
+}
+
+message ListChannelMembersRequest {
+  string channel_id = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListChannelMembersResponse {
+  repeated ChannelMember members = 1;
+  string next_page_token = 2;
+}

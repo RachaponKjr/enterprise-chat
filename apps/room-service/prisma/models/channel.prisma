@@ -1,0 +1,28 @@
+model Channel {
+  id          String  @id @default(uuid())
+  workspaceId String
+  categoryId  String?
+
+  name        String
+  description String            @default("")
+  type        ChannelType       @default(CHANNEL_TYPE_TEXT)
+  visibility  ChannelVisibility @default(CHANNEL_VISIBILITY_PUBLIC)
+
+  position  Int    @default(0)
+  createdBy String
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  category Category? @relation(fields: [categoryId, workspaceId], references: [id, workspaceId], onDelete: NoAction, onUpdate: NoAction)
+
+  members ChannelMember[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([workspaceId, categoryId, position])
+  @@index([workspaceId, visibility])
+  @@index([createdBy])
+  @@index([deletedAt])
+}

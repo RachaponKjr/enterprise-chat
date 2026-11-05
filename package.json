@@ -10,5 +10,8 @@
     "build": "pnpm -r --filter './apps/*' run build",
     "infra:up": "docker compose up -d",
     "infra:down": "docker compose down"
+  },
+  "devDependencies": {
+    "protobufjs": "^8.8.1"
   }
 }

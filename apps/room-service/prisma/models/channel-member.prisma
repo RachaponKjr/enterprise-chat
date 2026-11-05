@@ -1,0 +1,14 @@
+model ChannelMember {
+  channelId String
+  userId    String
+
+  role ChannelMemberRole @default(CHANNEL_MEMBER_ROLE_MEMBER)
+
+  joinedAt DateTime @default(now())
+
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@id([channelId, userId])
+  @@index([userId])
+  @@index([channelId, role])
+}
