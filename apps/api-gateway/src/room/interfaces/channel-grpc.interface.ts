@@ -6,6 +6,7 @@ import type {
   ChannelType,
   ChannelVisibility,
 } from '../dto/channel/channel-create.dto.js';
+import { ListChannelsReq } from '../dto/channel/get-channel.dto.js';
 
 export interface CreateChannelResponse {
   id: string;
@@ -21,6 +22,12 @@ export interface CreateChannelResponse {
   updated_at: ProtoTimestamp;
 }
 
+export interface ListChannelsResponse {
+  channels: CreateChannelResponse[];
+  next_page_token: string;
+}
+
 export interface ChannelGrpcService {
   createChannel(data: CreateChannelDto): Observable<CreateChannelResponse>;
+  listChannels(data: ListChannelsReq): Observable<ListChannelsResponse>;
 }

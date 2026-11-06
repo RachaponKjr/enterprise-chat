@@ -5,6 +5,7 @@ import { WorkspaceService } from './workspace.service.js';
 import type { ListWorkspacesRequest } from './use-cases/getlistworkspace-use-case.js';
 import { GetWorkspaceByIdDto } from './dto/workspace.dto.js';
 import { CreateChannelDto } from './dto/channel/channel-create.dto.js';
+import { ListChannelsReq } from './dto/channel/get-channel.dto.js';
 
 @Controller()
 export class WorkspaceController {
@@ -29,5 +30,10 @@ export class WorkspaceController {
   @GrpcMethod('WorkspaceService', 'CreateChannel')
   createChannel(payload: CreateChannelDto) {
     return this.workspaceService.createChannel(payload);
+  }
+
+  @GrpcMethod('WorkspaceService', 'ListChannels')
+  listChannels(payload: ListChannelsReq) {
+    return this.workspaceService.listChannels(payload);
   }
 }

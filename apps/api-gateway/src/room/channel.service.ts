@@ -5,7 +5,9 @@ import { Observable } from 'rxjs';
 import {
   ChannelGrpcService,
   CreateChannelResponse,
+  ListChannelsResponse,
 } from './interfaces/channel-grpc.interface.js';
+import { ListChannelsReq } from './dto/channel/get-channel.dto.js';
 
 @Injectable()
 export class ChannelSerivce implements OnModuleInit {
@@ -21,5 +23,9 @@ export class ChannelSerivce implements OnModuleInit {
 
   createChannel(payload: CreateChannelDto): Observable<CreateChannelResponse> {
     return this.grpcService.createChannel(payload);
+  }
+
+  listChannels(payload: ListChannelsReq): Observable<ListChannelsResponse> {
+    return this.grpcService.listChannels(payload);
   }
 }

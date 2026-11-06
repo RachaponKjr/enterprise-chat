@@ -20,9 +20,9 @@ service WorkspaceService {
   rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryResponse);
 
   // Channel
-  rpc CreateChannel(CreateChannelRequest) returns (Channel);
+  rpc CreateChannel(CreateChannelRequest) returns (Channel); //ok
   rpc GetChannel(GetChannelRequest) returns (Channel);
-  rpc ListChannels(ListChannelsRequest) returns (ListChannelsResponse);
+  rpc ListChannels(ListChannelsRequest) returns (ListChannelsResponse); //ok
   rpc UpdateChannel(UpdateChannelRequest) returns (Channel);
   rpc DeleteChannel(DeleteChannelRequest) returns (DeleteChannelResponse);
 
